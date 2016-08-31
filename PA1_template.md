@@ -1,13 +1,9 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
-```{r loading, message=F, warning=F}
+
+```r
 #Ensure I am working in the right project directory. Uncomment only on my own system. Evaluators may need to set this themselves.
 #setwd("C:\\Users\\cchubb\\Coursera\\DataScience\\5ReproducibleResearch\\RepData_PeerAssessment1")
 
@@ -30,7 +26,8 @@ library(dplyr, quietly=TRUE)
 
 
 ## What is mean total number of steps taken per day?
-```{r stepsperday}
+
+```r
 sum_by_day <- activity %>% 
   group_by(date) %>% 
   summarize(steps=sum(steps, na.rm=TRUE))
@@ -43,11 +40,14 @@ abline(v = mean_steps, col = "blue", lwd = 2)
 abline(v = median_steps, col = "red", lwd = 2)
 ```
 
-There is a mean of `r mean_steps` and a median of `r median_steps` steps per day.
+![](PA1_template_files/figure-html/stepsperday-1.png)<!-- -->
+
+There is a mean of 9354.2295082 and a median of 10395 steps per day.
 
 
 ## What is the average daily activity pattern?
-```{r averagedaily}
+
+```r
 mean_by_interval <- activity %>% 
   group_by(interval) %>% 
   summarize(mean_steps=mean(steps, na.rm=T))
@@ -59,17 +59,21 @@ plot(mean_by_interval$interval, mean_by_interval$mean_steps, type="l", lwd=1)
 abline(v = max_interval, col = "blue", lwd = 1)
 ```
 
-At `r max_interval` the maximum average of `r max_steps` was recorded. 
+![](PA1_template_files/figure-html/averagedaily-1.png)<!-- -->
+
+At 835 the maximum average of 206.1698113 was recorded. 
 
 ## Imputing missing values
-```{r countmissingvalues}
+
+```r
 #Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 na_count <- sum(is.na(activity$steps))
 ```
 
-There are `r na_count` missing values in the data set. 
+There are 2304 missing values in the data set. 
 
-```{r imputemissingvalues}
+
+```r
 #Use the mean steps during an interval to fill in missing values 
 activity_filled <- activity %>% 
   inner_join(mean_by_interval, by="interval") %>% 
@@ -95,12 +99,15 @@ abline(v = mean_steps, col = "blue", lwd = 2)
 abline(v = median_steps, col = "red", lwd = 2)
 ```
 
-After imputing, there is a mean of `r mean_steps_filled` and a median of `r median_steps_filled` steps per day.
+![](PA1_template_files/figure-html/imputemissingvalues-1.png)<!-- -->
 
-Before imputing there was a mean of `r mean_steps` and a median of `r median_steps` steps per day.
+After imputing, there is a mean of 1.0766189\times 10^{4} and a median of 1.0766189\times 10^{4} steps per day.
+
+Before imputing there was a mean of 9354.2295082 and a median of 10395 steps per day.
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r daydiff}
+
+```r
 #Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 activity$weekend <- ifelse(strptime(activity$date, format="%Y-%m-%d")$wday %in% c(0,6), "weekend", "weekday")
 
@@ -114,6 +121,8 @@ avg_steps_weekend_interval <- activity %>%
 library(lattice)
 xyplot(steps ~ interval | weekend, data=avg_steps_weekend_interval, type="l", xlab="Interval", ylab="Number of steps", main="Mean number of steps per interval", layout=c(1,2))
 ```
+
+![](PA1_template_files/figure-html/daydiff-1.png)<!-- -->
 
 
 
